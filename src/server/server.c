@@ -43,21 +43,21 @@ HttpServerConfig createHttpServerConfig(int port)
 
 int createHttpServer(HttpServerConfig* config)
 {
-    serverFd fd = initializeSocket((*config).port);
+    serverFd fd = initializeSocket(config->port);
 
     if (fd < 0)
     {
         return -1;
     }
 
-    (*config).fd = fd;
+    config->fd = fd;
 
     return 0;
 }
 
 int runHttpServer(HttpServerConfig *config)
 {
-    int isListening = listen((*config).fd, 10);
+    int isListening = listen(config->fd, 10);
 
     if (isListening < 0)
     {
@@ -65,13 +65,13 @@ int runHttpServer(HttpServerConfig *config)
     }
 
     registerSigintHandler(config);
-    (*config).active = 1;
+    config->active = 1;
 
-    printf("http server is listening on port: %d\n", (*config).port);
+    printf("http server is listening on port: %d\n", config->port);
 
-    while ((*config).active > 0)
+    while (config->active > 0)
     {
-        int connection = accept((*config).fd, NULL, NULL);
+        int connection = accept(config->fd, NULL, NULL);
 
         if (connection < 0)
         {
@@ -88,14 +88,14 @@ int runHttpServer(HttpServerConfig *config)
 
 int shutdownHttpServer(HttpServerConfig *config)
 {
-    if ((*config).active > 0)
+    if (config->active > 0)
     {
-        (*config).active = 0;
+        config->active = 0;
     }
 
-    shutdown((*config).fd, SHUT_RDWR);
-    close((*config).fd);
-    
+    shutdown(config->fd, SHUT_RDWR);
+    close(config->fd);
+
     printf("http server was shut down successfully\n");
 
     return 0;

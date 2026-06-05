@@ -11,7 +11,7 @@ HttpServerConfig* globalServerConfig;
 
 void onSigint(int)
 {
-    (*globalServerConfig).active = 0;
+    globalServerConfig->active = 0;
 }
 
 void registerSigintHandler(HttpServerConfig* config)

@@ -2,32 +2,27 @@ CC = gcc
 AR = ar
 
 CFLAGS = -Wall -Wextra -Iinclude -std=c17
+
 BUILD_DIR = build
 SRC_DIR = src
 
 LIB_NAME = libhttpserver.a
 LIB = $(BUILD_DIR)/$(LIB_NAME)
 
-SRCS = \
-    $(SRC_DIR)/server/server.c \
-    $(SRC_DIR)/router/router.c \
-	$(SRC_DIR)/terminator/terminator.c
-
-OBJS = $(SRCS:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
+SRCS := $(shell find $(SRC_DIR) -name "*.c")
+OBJS := $(SRCS:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
 
 EXAMPLE = example/main.c
 EXAMPLE_BIN = $(BUILD_DIR)/example
 
-all: clean $(LIB)
-
-clean:
-	rm -rf $(BUILD_DIR)
-	mkdir -p $(BUILD_DIR)/server $(BUILD_DIR)/router $(BUILD_DIR)/terminator
+all: $(LIB)
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
+	mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(LIB): $(OBJS)
+	mkdir -p $(BUILD_DIR)
 	$(AR) rcs $@ $^
 
 example: $(LIB)
@@ -35,5 +30,8 @@ example: $(LIB)
 
 run-example: example
 	./$(EXAMPLE_BIN)
+
+clean:
+	rm -rf $(BUILD_DIR)
 
 .PHONY: all clean example run-example

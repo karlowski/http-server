@@ -10,6 +10,7 @@
 #include "../router/router.h"
 #include "../terminator/terminator.h"
 
+
 serverFd initializeSocket(int port)
 {
     int serverFd = socket(AF_INET, SOCK_STREAM, 0);
